@@ -16,6 +16,8 @@ import { CreateComponent } from './components/create/create.component';
   imports: [
     BrowserModule,
     StoreModule.forRoot({
+      // this is mapped with this line in the components
+      // this.tutorials$ = store.select('tutorial');
       tutorial: reducer
     })
   ],
