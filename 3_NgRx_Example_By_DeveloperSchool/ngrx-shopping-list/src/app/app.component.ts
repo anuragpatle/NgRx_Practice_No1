@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { ShoppingItem } from './store/models/shopping-item.model';
 import { Store } from '@ngrx/store';
 import { AppState } from './store/models/app-state.model';
+import { AddItemAction } from './store/actions/shopping.actions';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-root',
@@ -19,16 +21,23 @@ export class AppComponent implements OnInit {
    */
   shoppingItems: Observable<Array<ShoppingItem>>;
 
+  newShoppingItem: ShoppingItem = { id: '', name: '' };
+
   constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
 
-
-
     this.shoppingItems = this.store.select(store => store.shopping); // Srong typing
     // or
     // this.shoppingItems = this.store.select('shopping'); // weak typing
+  }
 
+  addItem() {
+    this.newShoppingItem.id = uuid();
+
+    this.store.dispatch(new AddItemAction(this.newShoppingItem));
+
+    this.newShoppingItem = { id: '', name: '' };
   }
 
 }
