@@ -5,6 +5,8 @@ import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { ShoppingReducer } from './store/reducers/shopping.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -16,7 +18,8 @@ import { ShoppingReducer } from './store/reducers/shopping.reducer';
     FormsModule,
     StoreModule.forRoot({
       shopping: ShoppingReducer
-    })
+    }),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
   ],
   providers: [],
   bootstrap: [AppComponent]
