@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ShoppingItem } from './store/models/shopping-item.model';
 import { Store } from '@ngrx/store';
-import { AppState } from './store/models/app-state.model';
-import { AddItemAction, DeleteItemAction } from './store/actions/shopping.actions';
+import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+
+import { AppState } from './store/models/app-state.model';
+import { ShoppingItem } from './store/models/shopping-item.model';
+import { AddItemAction, DeleteItemAction, LoadShoppingAction } from './store/actions/shopping.actions';
 
 @Component({
   selector: 'app-root',
@@ -12,28 +13,27 @@ import { v4 as uuid } from 'uuid';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'ngrx-shopping-list';
 
-  /**
-   * Our shoppingItems observable matches the shopping reducer
-   * that we defined in our StoreModule.forRoot() earlier. We also created
-   * the AppState interface to match this and give us strong typing.
-   */
   shoppingItems: Observable<Array<ShoppingItem>>;
-
+  loading$: Observable<boolean>;
+  error$: Observable<Error>;
   newShoppingItem: ShoppingItem = { id: '', name: '' };
 
   constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
+    this.shoppingItems = this.store.select(store => store.shoppingState.list);
+    this.loading$ = this.store.select(store => store.shoppingState.loading);
+    this.error$ = this.store.select(store => store.shoppingState.error);
 
-    this.shoppingItems = this.store.select(store => store.shopping); // Srong typing
-    // or
-    // this.shoppingItems = this.store.select('shopping'); // weak typing
+    this.store.dispatch(new LoadShoppingAction());
   }
 
   addItem() {
     this.newShoppingItem.id = uuid();
+
+    console.log('Inside addItem');
+
 
     this.store.dispatch(new AddItemAction(this.newShoppingItem));
 
@@ -43,5 +43,4 @@ export class AppComponent implements OnInit {
   deleteAnItem(id: string) {
     this.store.dispatch(new DeleteItemAction(id));
   }
-
 }
